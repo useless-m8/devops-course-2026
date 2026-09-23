@@ -1,2 +1,5 @@
-Make a very cool project using Java and SpringBoot with the core idea being a synchronized alarm app.
-
+# Мой проект
+Идея: Java-приложение кооперативного будильника
+Суть: Синхронизация будильников между разными устройствами
+Стек: [Java, Spring, Kotlin, PostgreSQL]
+Цель: научиться писать крутые приложенияr 
