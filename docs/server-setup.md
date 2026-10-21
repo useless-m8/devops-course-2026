@@ -198,3 +198,36 @@ bash scripts/audit.sh
 
 
 
+## 8. Веб-сервер
+
+На Ubuntu Server используется веб-сервер **Nginx**, установленный из пакета `nginx`.
+
+Конфигурация ресурса `devops.local` находится в `/etc/nginx/sites-available/devops-site`. В каталоге `/etc/nginx/sites-enabled/` создана символическая ссылка на неё. Стандартный сайт Nginx отключён.
+
+Статические файлы находятся в `/var/www/devops-site/`. Владелец каталога и файлов — `devops:devops`. Права каталогов — `755`, файлов — `644`. Пользователь `www-data` может читать опубликованные файлы, но не изменять их.
+
+Сервер принимает HTTP-запросы на порту 80 и перенаправляет их на HTTPS (порт 443, код 301).
+
+Используется самоподписанный TLS-сертификат со сроком действия 365 дней:
+
+- Сертификат: `/etc/ssl/certs/devops.crt`, права `644`.
+- Приватный ключ: `/etc/ssl/private/devops.key`, права `600`.
+
+Команда формирования сертификата:
+
+```bash
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/ssl/private/devops.key \
+  -out /etc/ssl/certs/devops.crt \
+  -subj "/CN=devops.local" \
+  -addext "subjectAltName=DNS:devops.local"
+```
+
+Проверка конфигурации:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Содержимое ресурса доставляется из каталога `site/` Git-репозитория через `rsync`. Для автоматизированной доставки используется `scripts/deploy.sh`.
