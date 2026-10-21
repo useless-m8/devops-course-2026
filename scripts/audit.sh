@@ -1,3 +1,19 @@
+
+# [4] Веб-сервер
+
+systemctl is-active --quiet nginx
+
+sudo nginx -t
+
+openssl x509 \
+    -in /etc/ssl/certs/devops.crt \
+    -noout -checkend 2592000
+
+test "$(sudo stat -c '%a' /etc/ssl/private/devops.key)" = "600"
+
+test -z "$(find /var/www/devops-site -type f -perm -o+w -print -quit)"
+
+
 #!/usr/bin/env bash
 set -uo pipefail
 
@@ -46,5 +62,7 @@ awk -F: '$3>=1000 && $3<65534 {
 }' /etc/passwd
 
 echo "Пройдено: $PASS, не пройдено: $FAIL"
+
+
 
 [[ $FAIL -eq 0 ]] && exit 0 || exit 1
